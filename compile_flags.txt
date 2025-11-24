@@ -1,0 +1,8 @@
+-Wall
+-Wextra
+-O0
+-g
+-MMD
+-fsanitize=address,undefined
+-Werror=vla
+-D_GNU_SOURCE
