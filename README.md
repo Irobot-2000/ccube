@@ -1,13 +1,13 @@
-#Rotating unicode cube in c
+# Rotating unicode cube in c
 
 ![GIF of the spinnging cube on my desktop](./running.gif)
 I wanted a spinning text cube for my desktop so I wrote this program. 
 For the cube to be animated, this program has to be called repeatedly.
 
-##dependencies
+## dependencies
  A posix based system with clang and make installed
 
-##To run
+## To run
 ```bash
 git clone {url to this repo}
 cd ccube
