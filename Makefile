@@ -1,54 +1,30 @@
-
+TARGET = ccube
 
 CC = clang
-CFLAGS = -Wall -Wextra -O0 -g -MMD -fsanitize=address,undefined -Werror=vla -D_GNU_SOURCE
-LIBS = #nothing for now
-LDFLAGS = -fsanitize=address,undefined
-TARGET = ccube
-FORMAT_EXTENSIONS = c h
-ASSIGNMENT_TYPE=STANDALONE
+SRCS  = ./main.c
+CFILES = ./*.c
+OBJS = $(SRCS:.c=.o)
+OBJS_TO_DELETE = $(CFILES:.c=.o)
+DEPS_TO_DELETE = $(CFILES:.c=.d)
 
-SRC = ./main.c
-OBJ = $(SRC:.c=.o)
-DEP = $(SRC:.c=.d)
-
-CFILES =./*.c 
-OBJ_TO_DELETE = $(CFILES:.c=.o)
-DEP_TO_DELETE = $(CFILES:.c=.d)
-
-.PHONY: all clean clean_fr format echo tidy test
+INCLUDES = -I./include
+CCFLAGS = -O2 -Wall $(INCLUDES)
+LDFLAGS = -lm
 
 
-$(TARGET): $(OBJ)
-	$(CC) @compile_flags.txt $^ -o $@ $(LIBS) $(LDFLAGS) && make tidy
+all: $(TARGET)
 
-%.o: %.c compile_flags.txt
-	$(CC) @compile_flags.txt -c $< -o $@
+$(TARGET): $(OBJS) $(HEADS)
+	$(CC) $(LDFLAGS) -o $@ $(OBJS)
 
-compile_flags.txt:
-	(echo $(CFLAGS) | tr ' ' '\n'; \
-		pkg-config --cflags $(LIBS) | tr ' ' '\n'	) > compile_flags.txt
+run: all
+	@./$(TARGET)
 
-tidy: compile_flags.txt
-	@echo "Linting source files..."
-	@FLAGS="$$(tr '\n' ' ' < compile_flags.txt)"; \
-	for f in $(foreach ext,$(FORMAT_EXTENSIONS),*.$(ext)); do \
-		[ -f "$$f" ] || continue; \
-		clang-tidy "$$f" -- $$FLAGS; \
-	done
-	@echo "Done linting!"
+.PHONY: depend clean
+depend:
+	$(CC) $(INCLUDES) -MM $(SRCS) > $(DEPS)
+	@sed -i -E "s/^(.+?).o: ([^ ]+?)\1/\2\1.o: \2\1/g" $(DEPS)
 
+clean:
+	$(RM) $(OBJS_TO_DELETE) $(DEPS_TO_DELETE) $(TARGET)
 
-
-
-format:
-	@echo "Formatting source files..."
-	@find . -type f \( $(foreach ext,$(FORMAT_EXTENSIONS),-name '*.$(ext)' -o ) -false \) \
-		-exec clang-format -i -verbose {} + 2> /dev/null
-	@echo "Done formatting!"
-
-clean: 
-	rm -f $(OBJ_TO_DELETE) $(DEP_TO_DELETE) $(TARGET) \
-
-clean_fr: clean
-	rm compile_flags.txt
