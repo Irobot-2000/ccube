@@ -1,10 +1,4 @@
-# To adapt this Makefile to your project:
-# 1. List out the libraries you need in LIBS e.g. LIBS = gtk+-3.0
-# 2. Write out the name of the file that has main, without the .c extension
-# 		E.g. mini_rotate_gtk3.c holds the main function, write mini_rotate_gtk3
-# Leave the rest alone, compile_flags.txt will be generated on the first make
-#
-# An autoconfigured .clang-format is also included by default
+
 
 CC = clang
 CFLAGS = -Wall -Wextra -O0 -g -MMD -fsanitize=address,undefined -Werror=vla -D_GNU_SOURCE
