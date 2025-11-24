@@ -10,7 +10,7 @@ For the cube to be animated, this program has to be called repeatedly.
 
 ## To run
 ```bash
-git clone {url to this repo}
+git clone https://github.com/Irobot-2000/ccube.git
 cd ccube
 make clean && make
 ```
